@@ -1,25 +1,31 @@
 <template>
     <div>
-
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="审批人">
-        <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form-item label="生产厂家">
+        <el-input v-model="formInline.user" placeholder="生产厂家"></el-input>
+ 
       </el-form-item>
-      <el-form-item label="活动区域">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
-        </el-select>
+      <el-form-item label="负责人">
+        <el-input v-model="formInline.user" placeholder="负责人"></el-input>
       </el-form-item>
+      
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button type="primary" @click="queryBatch">精确查询</el-button>
+        <el-button type="primary" @click="addOrUpdate">添加厂商</el-button>
+        <el-button type="primary" @click="deleteAll">批量删除</el-button>
+        
       </el-form-item>
     </el-form>
     <el-table
     :data="listinfo"
     border
+    @selection-change="selectChangeEvent"
     style="width: 100%">
+    <el-table-column
+      type="selection"
+      width="55">
+    </el-table-column>
     <el-table-column
       fixed
       type="index"
@@ -27,52 +33,54 @@
       width="100">
     </el-table-column>
     <el-table-column
-      prop="contactor"
+      prop="customName"
       label="客户名称"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="ctype"
+      prop="contractNo"
       label="合同号"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="mobile"
       label="货物数/附件数"
       width="120">
+      <template slot-scope="scope">
+        {{scope.row.cnumber}}/{{scope.row.extCnumber}}
+      </template>
     </el-table-column>
     <el-table-column
-      prop="orderNo"
+      prop="inputBy"
       label="制单人"
       width="80">
     </el-table-column>
     <el-table-column
-      prop="phone"
+      prop="checkBy"
       label="审核人"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="createTime"
+      prop="inspector"
       label="验货员"
       width="100">
     </el-table-column>
     <el-table-column
-      prop="createTime"
+      prop="signingDate"
       label="签单日期"
       width="200">
     </el-table-column>
     <el-table-column
-      prop="createTime"
+      prop="deliveryPeriod"
       label="交货期限"
       width="200">
     </el-table-column>
     <el-table-column
-      prop="createTime"
+      prop="shipTime"
       label="船期"
       width="200">
     </el-table-column>
     <el-table-column
-      prop="createTime"
+      prop="amount"
       label="总金额"
       width="120">
     </el-table-column>
@@ -80,31 +88,22 @@
     <el-table-column
       prop="state"
       label="状态"
-      width="150">
+      width="250">
       <template slot-scope="scope" >
-        <el-tag v-show="scope.row.state == '0'">启用</el-tag>
-        <el-tag type="danger" v-show="scope.row.state != '0'">禁用</el-tag>
-        <!-- <el-switch
-          style="display: block"
-          :v-model="scope.row.state"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="启用"
-          inactive-text="禁用"
-          @change="changeStatus(scope.row.factoryId , scope.row.state)"
-          >
-        </el-switch> -->
+        <el-tag v-show="scope.row.state == '0'">未走货</el-tag>
+        <el-tag type="info" v-show="scope.row.state != '1'">草稿</el-tag>
+        <el-tag type="success" v-show="scope.row.state != '2'">已上报</el-tag>
       </template>
     </el-table-column>
-
     <el-table-column
       fixed="right"
       label="操作"
-      width="100">
+      width="150">
       <template slot-scope="scope">
         
-        <el-button @click="deleteInfo(scope.row.factoryId)" type="text" size="small">删除</el-button>
-        <el-button type="text" size="small" @click="updateInfo">编辑</el-button>
+        <el-button @click="nothings" type="text" size="small">货物</el-button>
+        <el-button type="text" size="small" @click="updateInfo">修改</el-button>
+        <el-button type="text" size="small" @click="deleteInfo(scope.row.contractId)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -145,6 +144,9 @@ export default {
         this.queryProductLIst()
     },
     methods:{
+      selectChangeEvent(){
+
+      },
       handleClose(done) {
         this.$confirm('确认关闭？')
           .then(_ => {
@@ -152,13 +154,24 @@ export default {
           })
           .catch(_ => {});
       },
+      addOrUpdate(){
+
+      },
+      deleteAll(){
+
+      },
       queryBatch(){
         
+      },
+      nothings(){
+
       },
       updateInfo(){
 
       },
       deleteInfo(id){
+        console.log(id);
+        
         //deleteById
           this.$confirm(`此操作将永久删除记录 id:[${id}], 是否继续?`, '提示', {
           confirmButtonText: '确定',
@@ -166,7 +179,7 @@ export default {
           type: 'warning'
           }).then(() => {
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/factory-c/deleteById/${id}`),
+            url: this.$http.adornUrl(`/admin/service/factory/contract-c/deleteById/${id}`),
             method: 'delete',
             // params: this.$http.adornParams()
             }).then( res => {
@@ -176,6 +189,7 @@ export default {
               type: 'success',
               message: '删除成功!'
             });
+            this.queryProductLIst()
             })
 
             
@@ -186,6 +200,7 @@ export default {
             });          
           });
       },
+
       changeStatus(id , status){
         this.factoryInfo.factoryId = id;
         this.factoryInfo.state = status ? '0' : '1';
@@ -197,7 +212,6 @@ export default {
           }).then( res => {
             // this.dataList = treeDataTranslate(data, 'menuId')
             // this.dataListLoading = false
-            console.log(res.data.records)
             this.listinfo = res.data.records
           })
       },
@@ -215,14 +229,13 @@ export default {
         },
         queryProductLIst(){
           this.$http({
-          url: this.$http.adornUrl(`/admin/service/factory/factory-c/queryByCondition/${this.current}/${this.limit}`),
+          url: this.$http.adornUrl(`/admin/service/factory/contract-c/queryByCondition/${this.current}/${this.limit}`),
           method: 'post',
           // params: this.$http.adornParams()
           }).then( res => {
             // this.dataList = treeDataTranslate(data, 'menuId')
             // this.dataListLoading = false
-            console.log(res.data.records)
-            this.listinfo = res.data.records
+            this.listinfo = res.data.rows
           })
         },
     }
