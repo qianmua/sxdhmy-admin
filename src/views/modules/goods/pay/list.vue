@@ -24,15 +24,60 @@
     border
     @selection-change="selectChangeEvent"
     style="width: 100%">
+
     <el-table-column
       type="selection"
       width="55">
     </el-table-column>
+
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <el-form label-position="left" :inline="true" class="demo-table-expand">
+          <el-form-item label="客户名称">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="合同号">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="签单日期">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="交货期限">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="贸易条款">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="制单人">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="要求">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <br>
+          <el-form-item label="要求">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="要求">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="要求">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+          <el-form-item label="要求">
+            <span>{{ props.row.contractNo }}</span>
+          </el-form-item>
+
+        </el-form>
+
+      </template>
+    </el-table-column>
+
     <el-table-column
       fixed
       type="index"
       label="序号"
-      width="100">
+      width="70">
     </el-table-column>
     <el-table-column
       prop="customName"
@@ -103,7 +148,7 @@
       width="150">
       <template slot-scope="scope">
         
-        <el-button @click="nothings" type="text" size="small">货物</el-button>
+        <el-button  type="text" size="small" @click="shop(scope.row.contractId)" >货物</el-button>
         <el-button type="text" size="small" @click="updateInfo(scope.row.contractId)">修改</el-button>
         <el-button type="text" size="small" @click="deleteInfo(scope.row.contractId)">删除</el-button>
       </template>
@@ -200,8 +245,6 @@
     </el-dialog>
   
 
-
-
     </div>
 
 </template>
@@ -254,6 +297,9 @@ export default {
         this.queryProductLIst()
     },
     methods:{
+      shop(id){
+        this.$router.push({path:'/goods-shop/add' , query:{id:id} })
+      },
 
       selectChangeEvent(rows){
         this.idsAll = rows
