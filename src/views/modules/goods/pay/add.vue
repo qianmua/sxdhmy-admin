@@ -28,15 +28,14 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="贸易条款"  >
-                <el-input ></el-input>
-                <!-- <el-select v-model="value" clearable placeholder="请选择">
+                <el-select v-model="selAll" clearable placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
                 </el-option>
-              </el-select> -->
+              </el-select>
             </el-form-item>
             <el-form-item label="制单人"  >
                 <el-input v-model="ruleForm.inputBy"></el-input>
@@ -91,6 +90,23 @@
   export default {
     data() {
       return {
+        selAll: '',
+        options: [{
+          value: '1',
+          label: '条款A'
+        }, {
+          value: '2',
+          label: '条款B'
+        }, {
+          value: '3',
+          label: '条款C'
+        }, {
+          value: '4',
+          label: '条款D'
+        }, {
+          value: '5',
+          label: '条款E'
+        }],
         num: 0 ,
         ruleForm: {
             checkBy: "",
@@ -100,13 +116,13 @@
             createTime: "",
             customName: "",
             deliveryPeriod: "",
-            importNum: 0,
+            importNum: 1,
             inputBy: "",
             inspector: "",
             offeror: "",
             oldState: 0,
             outState: 0,
-            printStyle: 0,
+            printStyle: 1,
             remark: "",
             request: "",
             shipTime: "",
