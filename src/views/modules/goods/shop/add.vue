@@ -10,6 +10,7 @@
 
                     <el-table
                     :data="list"
+                    @row-click="clievent"
                     style="width: 100%">
                     <el-table-column
                         prop="factory"
@@ -40,12 +41,18 @@
                     </div>
                     
                     <el-row :gutter="20">
-                        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">包装单位：{{dataInfo.packingUnit}}</div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">厂家名称：{{dataInfo.factory}}</div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">货号：{{dataInfo.productNo}}</div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">数量：{{dataInfo.cnumber}}</div></el-col>
                     </el-row>
-
+                    <el-row :gutter="20">
+                        
+                        <el-col :span="6"><div class="grid-content bg-purple">装率：{{dataInfo.loadingRate}}</div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">箱数：{{dataInfo.boxNum}}</div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">单价：{{dataInfo.price}}</div></el-col>
+                        <el-col :span="6"><div class="grid-content bg-purple">总金额：{{dataInfo.price * dataInfo.cnumber }}</div></el-col>
+                    </el-row>
                 </el-card>
 
             </el-col>
@@ -107,7 +114,7 @@
                 
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="closedio">取 消</el-button>
                 <el-button type="primary" @click="addData">确 定</el-button>
             </div>
         </el-dialog>
@@ -168,7 +175,8 @@ export default {
                 sizeHeight: 0,
                 sizeLenght: 0,
                 sizeWidth: 0,
-                tax: 0
+                tax: 0,
+                baseId: '',
 
             },
             list:[],
@@ -178,10 +186,12 @@ export default {
             current: 1,
             limit: 1000,
             isAdd: false,
+            addOrUpdate : true
         }
     },
     created(){
         let id = this.$route.query.id
+        this.baseId = id
         if(id != undefined){
             
             this.queryList(id)
@@ -193,7 +203,6 @@ export default {
     },
     methods:{
         selectId(){
-
         },
         showDoalog(){
             this.dialogFormVisible2 = true
@@ -202,7 +211,6 @@ export default {
         addInfo(){
             let id = this.$route.query.id
             this.isAdd = true
-
             
             if(id === undefined && this.dataInfo.contractId.length === 0){
                 this.dialogFormVisible2 = true
@@ -210,7 +218,9 @@ export default {
                 this.dialogFormVisible = true
             }
         },
-
+        clievent(row){
+            this.queryById(row.contractProductId)
+        },
         isinputValue(){
             if(this.dataInfo.contractId.length < 1){
                 this.dialogFormVisible2 = true
@@ -223,6 +233,7 @@ export default {
             }
         },
         queryList(id){
+            
             this.$http({
             url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/queryAllInfo/${id}/${this.current}/${this.limit}`),
             method: 'post',
@@ -237,6 +248,7 @@ export default {
             // data: this.dataInfo,
             }).then( res => {
               this.dataInfo = res.data.info
+              
             })
         
         },
@@ -248,15 +260,22 @@ export default {
             }).then( res => {
               this.$notify({
               title: '成功',
-              message: '添加成功',
+              message: '修改',
               type: 'success'
             });
+            this.dialogFormVisible = false
+            this.queryList(this.baseId)
             })
         },
+        closedio(){
+          this.dialogFormVisible = false  
+          this.addOrUpdate = true
+        },
         updateInfo(){
+            this.addOrUpdate = false
             let id = this.dataInfo.contractId
             if(id.length > 0){
-                this.queryById(id)
+                // this.queryById(id)
                 this.dialogFormVisible = true
             }else{
                 this.$message({
@@ -264,15 +283,16 @@ export default {
                     message: '请选择左侧货物'
                 })
             }            
-            
         },
-        addData(){
+        add(){
             let facArr = this.factorys
             facArr.forEach(v1 =>{
                 if(v1.factoryId == this.dataInfo.factoryId ){
                     this.dataInfo.factory = v1.factoryName
                 }
             })
+            this.dataInfo.contractProductId = ''
+            this.dataInfo.contractId = this.baseId
             this.$http({
             url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/addInfo`),
             method: 'post',
@@ -283,9 +303,20 @@ export default {
               message: '添加成功',
               type: 'success'
             });
-            this.queryList(this.dataInfo.contractId)
+            this.queryList(this.baseId)
             this.dialogFormVisible = false
             })
+        },
+        addData(){
+            
+            if(this.addOrUpdate){
+                
+                this.add()
+                this.addOrUpdate = true
+            }else{
+                this.updateInfo2()
+                this.addOrUpdate = true
+            }
         },
         deleteBy(id){
             this.$confirm(`此操作将永久删除记录 id:[${id}], 是否继续?`, '提示', {
