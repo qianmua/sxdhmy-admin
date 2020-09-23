@@ -29,6 +29,14 @@
             </el-form-item>
             <el-form-item label="贸易条款"  >
                 <el-input ></el-input>
+                <!-- <el-select v-model="value" clearable placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select> -->
             </el-form-item>
             <el-form-item label="制单人"  >
                 <el-input v-model="ruleForm.inputBy"></el-input>
@@ -43,13 +51,13 @@
             </el-form-item>
 
             <el-form-item label="打印版式" >
-              <el-radio v-model="ruleForm.printStyle" label="1" border>两款</el-radio>
-             <el-radio v-model="ruleForm.printStyle" label="2" border>一款</el-radio>
+              <el-radio v-model="ruleForm.printStyle" :label="1" border>两款</el-radio>
+             <el-radio v-model="ruleForm.printStyle" :label="2" border>一款</el-radio>
             </el-form-item>
             <el-form-item label="重要程度" >
-              <el-radio v-model="ruleForm.importNum" label="3" border>⭐⭐⭐</el-radio>
-             <el-radio v-model="ruleForm.importNum" label="2" border>⭐⭐</el-radio>
-             <el-radio v-model="ruleForm.importNum" label="1" border>⭐</el-radio>
+              <el-radio v-model="ruleForm.importNum" :label="3" border>⭐⭐⭐</el-radio>
+             <el-radio v-model="ruleForm.importNum" :label="2" border>⭐⭐</el-radio>
+             <el-radio v-model="ruleForm.importNum" :label="1" border>⭐</el-radio>
             </el-form-item>
 
             <el-form-item label="船期" >
