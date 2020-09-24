@@ -4,8 +4,8 @@
             <el-col :span="6">
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
-                        <span>货物菜单</span>
-                        <el-button style="float: right; padding: 3px 0" type="text" @click="addInfo">添加货物</el-button>
+                        <span>附件菜单</span>
+                        <el-button style="float: right; padding: 3px 0" type="text" @click="addInfo">添加附件</el-button>
                     </div>
 
                     <el-table
@@ -27,7 +27,6 @@
                         label="操作">
                         <template slot-scope="scope">
                             <el-button @click="deleteBy(scope.row.contractProductId)" type="text" size="small">删除</el-button>
-                            <el-button type="text" size="small" @click="toFile(scope.row.contractProductId)">附件</el-button>
                         </template>
                     </el-table-column>
                     </el-table>
@@ -37,22 +36,29 @@
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
                         <span>货物明细</span>
-                        <el-button style="float: right; padding: 3px 0" type="text" @click="updateInfo">修改明细</el-button>
+                        <el-button style="float: right; padding: 3px 0" type="text" @click="updateInfo">修改附件信息</el-button>
                     </div>
                     
                     <el-row :gutter="20">
-                        <el-col :span="6"><div class="grid-content bg-purple">包装单位：{{dataInfo.packingUnit}}</div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">厂家名称：{{dataInfo.factory}}</div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">货号：{{dataInfo.productNo}}</div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">数量：{{dataInfo.cnumber}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">厂家名称：{{dataInfo.packingUnit}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">货号：{{dataInfo.factory}}</div></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                        
-                        <el-col :span="6"><div class="grid-content bg-purple">装率：{{dataInfo.loadingRate}}</div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">箱数：{{dataInfo.boxNum}}</div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">单价：{{dataInfo.price}}</div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">总金额：{{dataInfo.price * dataInfo.cnumber }}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">数量：{{dataInfo.productNo}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">包装单位：{{dataInfo.cnumber}}</div></el-col>
                     </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10"><div class="grid-content bg-purple">单价：{{dataInfo.cnumber}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">总金额：{{dataInfo.loadingRate}}</div></el-col>
+                    </el-row>
+                    <!-- <el-row :gutter="20">
+                        <el-col :span="10"><div class="grid-content bg-purple">货号：{{dataInfo.boxNum}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">货物照片：{{dataInfo.price}}</div></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10"><div class="grid-content bg-purple">包装单位：{{dataInfo.price * dataInfo.cnumber }}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">要求：{{dataInfo.cnumber}}</div></el-col>
+                    </el-row> -->
                 </el-card>
 
             </el-col>
@@ -60,7 +66,7 @@
         </el-row>
 
         <!-- ////////////////// -->
-        <el-dialog title="添加货物" :visible.sync="dialogFormVisible" width="900px">
+        <el-dialog title="添加附件信息" :visible.sync="dialogFormVisible" width="900px">
             <el-form :model="dataInfo"  label-width="100px">
                 <el-row :gutter="20">
                     <el-col :span="12">
@@ -74,13 +80,13 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="货物照片" >
+                        <el-form-item label="分类" >
                         <el-input v-model="dataInfo.productImage" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="数量" >
                             <el-input-number v-model="dataInfo.cnumber" :min="1" :max="999999" label="数量"></el-input-number>
                         </el-form-item>
-                        <el-form-item label="装率" >
+                        <el-form-item label="单价" >
                         <el-input v-model="dataInfo.loadingRate" autocomplete="off"></el-input>
                         </el-form-item>
                         
@@ -94,20 +100,25 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="单价" >
+                        <el-form-item label="货号" >
                         <el-input v-model="dataInfo.price" autocomplete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="货号" >
+                        <el-form-item label="货物照片" >
                         <el-input v-model="dataInfo.productNo" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="包装单位" >
                         <el-input v-model="dataInfo.packingUnit" autocomplete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="箱数" >
+                        <el-form-item label="排序号" >
                             <el-input-number v-model="dataInfo.boxNum" :min="1" :max="999999" label="描述文字"></el-input-number>
                         </el-form-item>
-                        <el-form-item label="排序号" >
-                            <el-input-number v-model="dataInfo.orderNo" :min="1" :max="999999" label="描述文字"></el-input-number>
+                        <el-form-item label="要求" >
+                            <el-input
+                            type="textarea"
+                            :rows="4"
+                            placeholder="请输入内容"
+                            v-model="dataInfo.productDesc">
+                            </el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -118,9 +129,9 @@
                 <el-button type="primary" @click="addData">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="请选择合同编号" :visible.sync="dialogFormVisible2" width="300px">
+        <el-dialog title="请选择货物编号" :visible.sync="dialogFormVisible2" width="300px">
         <el-form >
-            <el-form-item label="活动名称">
+            <el-form-item label="编号">
                 <el-select v-model="dataInfo.contractId" placeholder="请选择">
                     <el-option
                     v-for="item in contList"
@@ -202,9 +213,6 @@ export default {
         this.queryFactoryList()
     },
     methods:{
-        toFile(id){
-            this.$router.push({path:'/goods-file/add' , query:{id:id} })
-        },
         selectId(){
         },
         showDoalog(){
