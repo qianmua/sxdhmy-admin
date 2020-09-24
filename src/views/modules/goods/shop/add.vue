@@ -226,6 +226,7 @@ export default {
                 this.dialogFormVisible2 = true
             }else{
                 this.dialogFormVisible2 = false
+                this.baseId = this.dataInfo.contractId
                 this.queryList(this.dataInfo.contractId)
                 if(this.isAdd){
                     this.dialogFormVisible = true
@@ -233,7 +234,6 @@ export default {
             }
         },
         queryList(id){
-            
             this.$http({
             url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/queryAllInfo/${id}/${this.current}/${this.limit}`),
             method: 'post',
@@ -253,11 +253,18 @@ export default {
         
         },
         updateInfo2(){
+            let facArr = this.factorys
+            facArr.forEach(v1 =>{
+                if(v1.factoryId == this.dataInfo.factoryId ){
+                    this.dataInfo.factory = v1.factoryName
+                }
+            })
             this.$http({
             url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/updateInfo`),
             method: 'put',
             data: this.dataInfo,
             }).then( res => {
+
               this.$notify({
               title: '成功',
               message: '修改',
