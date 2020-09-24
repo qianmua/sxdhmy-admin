@@ -26,7 +26,7 @@
                         fixed="right"
                         label="操作">
                         <template slot-scope="scope">
-                            <el-button @click="deleteBy(scope.row.contractProductId)" type="text" size="small">删除</el-button>
+                            <el-button @click="deleteBy(scope.row.extCproductId)" type="text" size="small">删除</el-button>
                         </template>
                     </el-table-column>
                     </el-table>
@@ -40,16 +40,16 @@
                     </div>
                     
                     <el-row :gutter="20">
-                        <el-col :span="10"><div class="grid-content bg-purple">厂家名称：{{dataInfo.packingUnit}}</div></el-col>
-                        <el-col :span="10"><div class="grid-content bg-purple">货号：{{dataInfo.factory}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">厂家名称：{{dataInfo.factory}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">货号：{{dataInfo.productNo}}</div></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                        <el-col :span="10"><div class="grid-content bg-purple">数量：{{dataInfo.productNo}}</div></el-col>
-                        <el-col :span="10"><div class="grid-content bg-purple">包装单位：{{dataInfo.cnumber}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">数量：{{dataInfo.extCnumber}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">包装单位：{{dataInfo.packingUnit}}</div></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                        <el-col :span="10"><div class="grid-content bg-purple">单价：{{dataInfo.cnumber}}</div></el-col>
-                        <el-col :span="10"><div class="grid-content bg-purple">总金额：{{dataInfo.loadingRate}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">单价：{{dataInfo.price}}</div></el-col>
+                        <el-col :span="10"><div class="grid-content bg-purple">总金额：{{dataInfo.price *dataInfo.extCnumber }}</div></el-col>
                     </el-row>
                     <!-- <el-row :gutter="20">
                         <el-col :span="10"><div class="grid-content bg-purple">货号：{{dataInfo.boxNum}}</div></el-col>
@@ -81,7 +81,7 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="分类" >
-                            <el-select v-model="dataInfo.factoryId" placeholder="请选择">
+                            <el-select v-model="dataInfo.ctype" placeholder="请选择">
                                 <el-option
                                 v-for="item in sysList"
                                 :key="item.sysCodeId"
@@ -91,10 +91,10 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="数量" >
-                            <el-input-number v-model="dataInfo.cnumber" :min="1" :max="999999" label="数量"></el-input-number>
+                            <el-input-number v-model="dataInfo.extCnumber" :min="1" :max="999999" label="数量"></el-input-number>
                         </el-form-item>
                         <el-form-item label="单价" >
-                        <el-input v-model="dataInfo.loadingRate" autocomplete="off"></el-input>
+                        <el-input v-model="dataInfo.price" autocomplete="off"></el-input>
                         </el-form-item>
                         
                         <el-form-item label="货物描述" >
@@ -108,23 +108,23 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="货号" >
-                        <el-input v-model="dataInfo.price" autocomplete="off"></el-input>
+                        <el-input v-model="dataInfo.productNo" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="货物照片" >
-                        <el-input v-model="dataInfo.productNo" autocomplete="off"></el-input>
+                        <el-input v-model="dataInfo.productImage" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="包装单位" >
                         <el-input v-model="dataInfo.packingUnit" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="排序号" >
-                            <el-input-number v-model="dataInfo.boxNum" :min="1" :max="999999" label="描述文字"></el-input-number>
+                            <el-input-number v-model="dataInfo.orderNo" :min="1" :max="999999" label="描述文字"></el-input-number>
                         </el-form-item>
                         <el-form-item label="要求" >
                             <el-input
                             type="textarea"
                             :rows="4"
                             placeholder="请输入内容"
-                            v-model="dataInfo.productDesc">
+                            v-model="dataInfo.productRequest">
                             </el-input>
                         </el-form-item>
                     </el-col>
@@ -139,12 +139,12 @@
         <el-dialog title="请选择货物编号" :visible.sync="dialogFormVisible2" width="300px">
         <el-form >
             <el-form-item label="编号">
-                <el-select v-model="dataInfo.contractId" placeholder="请选择">
+                <el-select v-model="dataInfo.contractProductId" placeholder="请选择">
                     <el-option
                     v-for="item in contList"
-                    :key="item.contractId"
-                    :label="item.contractNo"
-                    :value="item.contractId">
+                    :key="item.contractProductId"
+                    :label="item.productNo"
+                    :value="item.contractProductId">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -212,13 +212,32 @@ export default {
         let id = this.$route.query.id
         this.baseId = id
         if(id != undefined){
-            
+            this.queryProductLIst2()
             this.queryList(id)
+        }else{
+            
+            this.showDoalog()
+        }
+        this.queryFactoryList()
+        this.querySysList()
+    },
+    mounted(){
+        let id = this.$route.query.id
+        this.baseId = id
+        if(id != undefined){
+            this.queryList(id)
+            
         }else{
             this.queryProductLIst2()
             this.showDoalog()
         }
         this.queryFactoryList()
+        this.querySysList()
+    },
+    watch:{
+        '$route.query.id': function(newVal,oldVal){
+            this.queryList(newVal)
+        }
     },
     methods:{
         selectId(){
@@ -242,6 +261,7 @@ export default {
         },
         isinputValue(){
             if(this.dataInfo.contractProductId.length < 1){
+                this.queryProductLIst2()
                 this.dialogFormVisible2 = true
             }else{
                 this.dialogFormVisible2 = false
@@ -254,7 +274,7 @@ export default {
         },
         queryList(id){
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/queryAll/${id}/${this.current}/${this.limit}`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-cproduct-c/queryAll/${id}/${this.current}/${this.limit}`),
             method: 'post',
             }).then( res => {
                 this.list = res.data.rows
@@ -262,7 +282,7 @@ export default {
         },
         queryById(id){
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/queryById/${id}`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-cproduct-c/queryById/${id}`),
             method: 'get',
             // data: this.dataInfo,
             }).then( res => {
@@ -279,7 +299,7 @@ export default {
                 }
             })
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/updateInfo`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-cproduct-c/updateInfo`),
             method: 'put',
             data: this.dataInfo,
             }).then( res => {
@@ -323,8 +343,10 @@ export default {
             })
             this.dataInfo.extCproductId = ''
             this.dataInfo.contractProductId = this.baseId
+            console.log("id: " + this.baseId);
+            
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/addInfo`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-cproduct-c/addInfo`),
             method: 'post',
             data: this.dataInfo,
             }).then( res => {
@@ -355,7 +377,7 @@ export default {
           type: 'warning'
           }).then(() => {
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/deleteById/${id}`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-cproduct-c/deleteById/${id}`),
             method: 'delete',
             // params: this.$http.adornParams()
             }).then( res => {
@@ -392,7 +414,8 @@ export default {
           url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/queryAllInfo/${this.current}/${this.limit}`),
           method: 'post',
           }).then( res => {
-            this.contList = res.data.rows
+              
+            this.contList = res.data.rows.records
           })
         },
         querySysList(){

@@ -192,14 +192,33 @@ export default {
     created(){
         let id = this.$route.query.id
         this.baseId = id
+        
         if(id != undefined){
-            
             this.queryList(id)
+            
         }else{
             this.queryProductLIst2()
+            
             this.showDoalog()
         }
         this.queryFactoryList()
+    },
+    mounted(){
+        let id = this.$route.query.id
+        this.baseId = id
+        if(id != undefined){
+            this.queryList(id)
+        }else{
+            this.queryProductLIst2()
+            
+            this.showDoalog()
+        }
+        this.queryFactoryList()
+    },
+    watch:{
+        '$route.query.id': function(newVal,oldVal){
+            this.queryList(newVal)
+        }
     },
     methods:{
         toFile(id){
@@ -226,6 +245,7 @@ export default {
         },
         isinputValue(){
             if(this.dataInfo.contractId.length < 1){
+                this.queryProductLIst2()
                 this.dialogFormVisible2 = true
             }else{
                 this.dialogFormVisible2 = false
