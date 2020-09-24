@@ -81,7 +81,14 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="分类" >
-                        <el-input v-model="dataInfo.productImage" autocomplete="off"></el-input>
+                            <el-select v-model="dataInfo.factoryId" placeholder="请选择">
+                                <el-option
+                                v-for="item in sysList"
+                                :key="item.sysCodeId"
+                                :label="item.name"
+                                :value="item.sysCodeId">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                         <el-form-item label="数量" >
                             <el-input-number v-model="dataInfo.cnumber" :min="1" :max="999999" label="数量"></el-input-number>
@@ -159,18 +166,19 @@ export default {
                 accessories: 0,
                 amount: 0,
                 boxNum: 0,
-                cnumber: 0,
-                contractId: "",
                 contractProductId: "",
                 costPrice: 0,
                 costTax: 0,
+                ctype: 0,
                 cunit: "",
                 exPrice: 0,
                 exUnit: "",
+                extCnumber: 0,
+                extCproductId: "",
                 factory: "",
                 factoryId: "",
                 finished: 0,
-                grossWeight: 0,
+                grossWeigh: 0,
                 loadingRate: "",
                 netWeight: 0,
                 noTax: 0,
@@ -186,13 +194,13 @@ export default {
                 sizeHeight: 0,
                 sizeLenght: 0,
                 sizeWidth: 0,
-                tax: 0,
-                baseId: '',
+                tax: 0
 
             },
             list:[],
             factorys: [],
             contList: [],
+            sysList: [],
             num: 0,
             current: 1,
             limit: 1000,
@@ -223,22 +231,22 @@ export default {
             let id = this.$route.query.id
             this.isAdd = true
             
-            if(id === undefined && this.dataInfo.contractId.length === 0){
+            if(id === undefined && this.dataInfo.contractProductId.length === 0){
                 this.dialogFormVisible2 = true
             }else{
                 this.dialogFormVisible = true
             }
         },
         clievent(row){
-            this.queryById(row.contractProductId)
+            this.queryById(row.extCproductId)
         },
         isinputValue(){
-            if(this.dataInfo.contractId.length < 1){
+            if(this.dataInfo.contractProductId.length < 1){
                 this.dialogFormVisible2 = true
             }else{
                 this.dialogFormVisible2 = false
-                this.baseId = this.dataInfo.contractId
-                this.queryList(this.dataInfo.contractId)
+                this.baseId = this.dataInfo.contractProductId
+                this.queryList(this.dataInfo.contractProductId)
                 if(this.isAdd){
                     this.dialogFormVisible = true
                 }
@@ -246,7 +254,7 @@ export default {
         },
         queryList(id){
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/queryAllInfo/${id}/${this.current}/${this.limit}`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/queryAll/${id}/${this.current}/${this.limit}`),
             method: 'post',
             }).then( res => {
                 this.list = res.data.rows
@@ -254,7 +262,7 @@ export default {
         },
         queryById(id){
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/queryById/${id}`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/queryById/${id}`),
             method: 'get',
             // data: this.dataInfo,
             }).then( res => {
@@ -271,7 +279,7 @@ export default {
                 }
             })
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/updateInfo`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/updateInfo`),
             method: 'put',
             data: this.dataInfo,
             }).then( res => {
@@ -291,14 +299,18 @@ export default {
         },
         updateInfo(){
             this.addOrUpdate = false
-            let id = this.dataInfo.contractId
+            let id = this.dataInfo.contractProductId
+            //
+            //
+            //
+            //
             if(id.length > 0){
                 // this.queryById(id)
                 this.dialogFormVisible = true
             }else{
                 this.$message({
                     type: 'info',
-                    message: '请选择左侧货物'
+                    message: '请选择左侧附件清单'
                 })
             }            
         },
@@ -309,10 +321,10 @@ export default {
                     this.dataInfo.factory = v1.factoryName
                 }
             })
-            this.dataInfo.contractProductId = ''
-            this.dataInfo.contractId = this.baseId
+            this.dataInfo.extCproductId = ''
+            this.dataInfo.contractProductId = this.baseId
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/addInfo`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/addInfo`),
             method: 'post',
             data: this.dataInfo,
             }).then( res => {
@@ -343,7 +355,7 @@ export default {
           type: 'warning'
           }).then(() => {
             this.$http({
-            url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/deleteById/${id}`),
+            url: this.$http.adornUrl(`/admin/service/factory/ext-product-c/deleteById/${id}`),
             method: 'delete',
             // params: this.$http.adornParams()
             }).then( res => {
@@ -353,7 +365,7 @@ export default {
               type: 'success',
               message: '删除成功!'
             });
-            this.queryList(this.dataInfo.contractId)
+            this.queryList(this.dataInfo.contractProductId)
             })
 
             
@@ -377,10 +389,18 @@ export default {
         },
         queryProductLIst2(){
           this.$http({
-          url: this.$http.adornUrl(`/admin/service/factory/contract-c/queryByCondition/${this.current}/${this.limit}`),
+          url: this.$http.adornUrl(`/admin/service/factory/contract-product-c/queryAllInfo/${this.current}/${this.limit}`),
           method: 'post',
           }).then( res => {
             this.contList = res.data.rows
+          })
+        },
+        querySysList(){
+            this.$http({
+          url: this.$http.adornUrl(`/admin/service/factory/sys-code-b/queryAll/${this.current}/${this.limit}`),
+          method: 'post',
+          }).then( res => {
+            this.sysList = res.data.rows
           })
         },
 
