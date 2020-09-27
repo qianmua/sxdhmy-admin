@@ -19,12 +19,14 @@
         
       </el-form-item>
     </el-form>
+
+
     <el-table
     :data="listinfo"
     border
     @selection-change="selectChangeEvent"
-    style="width: 100%">
-
+    style="width: 100%"
+    >
     <el-table-column
       type="selection"
       width="55">
@@ -32,41 +34,40 @@
 
     <el-table-column type="expand">
       <template slot-scope="props">
-        <el-form label-position="left" :inline="true" class="demo-table-expand">
-          <el-form-item label="客户名称">
-            <span>{{ props.row.contractNo }}</span>
+        <el-form label-position="left" :inline="true" class="demo-table-expand" v-for="items in props.row.contractProductCS" :key="items.contractProductId">
+          <h4>
+            货物信息：
+            <el-button  type="text" size="small" >附件：{{items.extCount}}</el-button>
+
+          </h4>
+          <el-form-item label="厂家名称">
+            <el-tag type="info">{{ items.factory}}</el-tag>
           </el-form-item>
-          <el-form-item label="合同号">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="货号">
+            <el-tag type="info">{{ items.productNo }}</el-tag>
           </el-form-item>
-          <el-form-item label="签单日期">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="数量">
+            <el-tag type="info">{{ items.cnumber }}</el-tag>
           </el-form-item>
-          <el-form-item label="交货期限">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="包装单位">
+            <el-tag type="info">{{ items.packingUnit }}</el-tag>
           </el-form-item>
-          <el-form-item label="贸易条款">
-            <span>{{ props.row.contractNo }}</span>
-          </el-form-item>
-          <el-form-item label="制单人">
-            <span>{{ props.row.contractNo }}</span>
-          </el-form-item>
-          <el-form-item label="要求">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="装率">
+            <el-tag type="info">{{ items.loadingRate }}</el-tag>
           </el-form-item>
           <br>
-          <el-form-item label="要求">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="箱数">
+            <el-tag type="info">{{ items.boxNum }}</el-tag>
           </el-form-item>
-          <el-form-item label="要求">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="单价">
+            <el-tag type="info">{{ items.price }}</el-tag>
           </el-form-item>
-          <el-form-item label="要求">
-            <span>{{ props.row.contractNo }}</span>
+          <el-form-item label="总金额">
+            <el-tag type="info">{{ items.price * items.cnumber }}</el-tag>
+            <span></span>
           </el-form-item>
-          <el-form-item label="要求">
-            <span>{{ props.row.contractNo }}</span>
-          </el-form-item>
+          <el-button type="success" plain @click="showItems(props.row)">查看订单详细信息</el-button>
+          <hr>
 
         </el-form>
 
@@ -243,7 +244,44 @@
         <el-button type="primary" @click="updateInfoById">确 定</el-button>
       </div>
     </el-dialog>
-  
+
+
+    <el-dialog title="购销合同明细" :visible.sync="dialogTableVisible3">
+      <el-row :gutter="20">
+        <el-col :span="10">客户名称： {{itemData.customName}}</el-col>
+        <el-col :span="10">收购方： {{itemData.offeror}}</el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10">合同号： {{itemData.contractNo}}</el-col>
+        <el-col :span="10">
+          打印版式：<el-tag type="info">{{ itemData.printStyle == 1 ? "一版" : 两版}}</el-tag>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10">签单日期： {{itemData.signingDate}}</el-col>
+        <el-col :span="10">重要程度：
+           <el-tag type="info">{{ itemData.importNum == 0 ? "⭐" : itemData.importNum == 1 ? "⭐⭐" : "⭐⭐⭐"}}
+             </el-tag>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10">交货期限： {{itemData.deliveryPeriod}}</el-col>
+        <el-col :span="10">船期： {{itemData.shipTime}}</el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10">贸易条款： {{itemData.contractNo}}</el-col>
+        <el-col :span="10">验货员： {{itemData.inspector}}</el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10">制单人： {{itemData.inputBy}}</el-col>
+        <el-col :span="10">审单人： {{itemData.checkBy}}</el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10">要求： {{itemData.request}}</el-col>
+        <el-col :span="10">说明： {{itemData.remark}}</el-col>
+      </el-row>
+      
+    </el-dialog>
 
     </div>
 
@@ -253,6 +291,7 @@ export default {
   data(){
         return {
           dialogFormVisible: false,
+          dialogTableVisible3: false,
           ruleForm: {
             checkBy: "",
             contractId: "",
@@ -290,13 +329,21 @@ export default {
             factoryInfo: {
               factoryId: '',
               state : ''
-            }
+            },
+
+            itemData: {},
+
         }
     },
     created(){
         this.queryProductLIst()
     },
     methods:{
+      showItems(row){
+          console.log(row)
+          this.itemData = row
+          this.dialogTableVisible3 = true
+      },
       shop(id){
         this.$router.push({path:'/goods-shop/add' , query:{id:id} })
       },
