@@ -34,28 +34,46 @@
     },
     methods: {
       submitForm() {
-        // 创建a标签 
+          // 创建a标签 
       // let link = document.createElement('a')
       // href链接 
-      // link.setAttribute('href', row.contract_file_url)
+      // link.setAttribute('href', '/ofs/table/option/test')
       // 自执行点击事件
       // link.click()
-      console.log(this.numberValidateForm.time);
       
       this.$http({
           url: this.$http.adornUrl(`/ofs/table/option/gen/excel`),
           method: 'post',
           data: this.numberValidateForm.time,
+          responseType: 'blob',
           }).then( res => {
-            let blob = new Blob([res], {type: "application/vnd.ms-excel"}); //res 就是文件流了
-            let objectUrl = URL.createObjectURL(blob);
-            window.location.href = objectUrl
+            this.download(res.data , `${this.numberValidateForm.time}合同数据.xlsx`)
         })
 
       },
       // resetForm(formName) {
       //   this.$refs[formName].resetFields();
       // }
+      download (data,titName) {
+        if(!data){
+          return
+        }
+        const content = data
+        const blob = new Blob([content],{type: "application/vnd.ms-excel"})
+        const fileName = titName?titName: '数据.xlsx'
+        if ('download' in document.createElement('a')) { // 非IE下载
+          const elink = document.createElement('a')
+          elink.download = fileName
+          elink.style.display = 'none'
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href) // 释放URL 对象
+          document.body.removeChild(elink)
+        } else { // IE10+下载
+          navigator.msSaveBlob(blob, fileName)
+        }
+      }
     }
   }
 </script>
