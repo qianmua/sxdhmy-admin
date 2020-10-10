@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>货物打印</h1>
+        <h1>合同打印</h1>
         <el-form :model="numberValidateForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="打印版式">
             <el-radio v-model="numberValidateForm.type" :label="0">一版</el-radio>

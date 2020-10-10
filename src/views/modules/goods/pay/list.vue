@@ -13,8 +13,8 @@
         <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button type="primary" @click="queryBatch">精确查询</el-button>
         <el-button type="primary" @click="addOrUpdate">添加厂商</el-button>
-        
         <el-button type="primary" @click="updateStatusAll">上报</el-button>
+        <el-button type="primary" @click="productExport">报运</el-button>
         <el-button type="primary" @click="deleteAll">批量删除</el-button>
         
       </el-form-item>
@@ -254,7 +254,7 @@
       <el-row :gutter="20">
         <el-col :span="10">合同号： {{itemData.contractNo}}</el-col>
         <el-col :span="10">
-          打印版式：<el-tag type="info">{{ itemData.printStyle == 1 ? "一版" : 两版}}</el-tag>
+          打印版式：<el-tag type="info">{{ itemData.printStyle == 1 ? "一版" : "两版"}}</el-tag>
         </el-col>
       </el-row>
       <el-row :gutter="20">
@@ -364,6 +364,7 @@ export default {
       updateStatusAll(){
         let ids = []
         let idsAll2 = this.idsAll
+        
         idsAll2.forEach(v1 => {
           ids.push(v1.contractId)
         })
@@ -391,6 +392,31 @@ export default {
             })
         })
 
+      },
+      productExport(){
+        let ids = []
+        let idsAll2 = this.idsAll
+        if(idsAll2)
+        idsAll2.forEach(v1 => {
+          ids.push(v1.contractId)
+        })
+        console.log(ids);
+        if( ids.length < 1){
+          this.$notify({
+            title: '警告',
+            message: '请选择合同报运',
+            type: 'warning'
+          });
+        }else{
+          this.$http({
+            url: this.$http.adornUrl(`/admin/service/factory/export-c/save`),
+            method: 'post',
+
+            data:  this.$http.adornData(ids, false),
+            }).then( res => {
+             this.$router.push({path:'/goods-export/list'})
+          })
+        }
       },
       deleteAll(){
         let ids = []

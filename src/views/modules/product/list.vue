@@ -242,6 +242,7 @@ export default {
         this.queryProductLIst()
     },
     methods:{
+      
       selectChangeEvent(val){
         
         this.ids = val
