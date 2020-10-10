@@ -5,9 +5,9 @@
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                
                 <el-form-item>
-                    <el-button type="primary" >上报</el-button>
                     <el-button type="primary" @click="removeAll">删除</el-button>
                     <el-button type="primary" @click="updateBatch">修改</el-button>
+                    <el-button type="primary" @click="packageProduct">装箱</el-button>
                     
                 </el-form-item>
             </el-form>
@@ -83,21 +83,85 @@
                 </el-table-column>
             </el-table>
         </el-card>
+
+
+        <el-dialog title="新增装货单信息" :visible.sync="dialogFormVisible">
+            <el-form :model="addinfo">
+                <el-form-item label="买方">
+                    <el-input v-model="addinfo.seller" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="卖方" >
+                    <el-input v-model="addinfo.buyer" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="发票号" >
+                    <el-input v-model="addinfo.invoiceNo" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="发票日期" >
+                    <el-input v-model="addinfo.invoiceDate" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="唛头" >
+                    <el-input v-model="addinfo.marks" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="描述" >
+                    <el-input v-model="addinfo.descriptions" autocomplete="off"></el-input>
+                </el-form-item>
+                
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addPackage">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 export default {
     data() {
         return {
+            dialogFormVisible: false,
             formInline:{},
             listinfo:[],
             ids:[],
+            addinfo:{
+                seller: '',
+                exportIds: '',
+                buyer: '',
+                invoiceNo: '',
+                invoiceDate: '',
+                marks: '',
+                descriptions: '',
+                state: 0,
+            },
         }
     },
     created(){
         this.queryAllExport()
     },
     methods: {
+        packageProduct(){
+            this.dialogFormVisible = true
+        },
+        addPackage(){
+            // let idsBatch = []
+            let idsAll2 = this.ids
+            idsAll2.forEach(v1 => {
+                // idsBatch.push(v1.exportId)
+                this.addinfo.exportIds += v1.exportId + ","
+            })
+            this.$http({
+                url: this.$http.adornUrl(`/admin/service/factory/packing-list-c/save`),
+                method: 'post',
+                data: this.addinfo,
+                }).then( res => {
+                    this.$notify({
+                    title: '成功',
+                    message: '添加',
+                    type: 'success'
+                });
+                this.dialogFormVisible = false
+                this.$router.push({path:'/goods-package/list'})
+            })
+        },
         removeAll(){
             let idsBatch = []
             let idsAll2 = this.ids

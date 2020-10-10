@@ -151,7 +151,7 @@ export default {
                 }).then( res => {
                     this.$notify({
                     title: '成功',
-                    message: '修改',
+                    message: '修改成功',
                     type: 'success'
                 });
                 this.$router.push({path:'/goods-export/list'})
