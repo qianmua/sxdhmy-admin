@@ -51,7 +51,7 @@
                     label="收货人及地址">
                 </el-table-column>
                 <el-table-column
-                    prop="transportMode"
+                    prop="shipmentPort"
                     label="装运港">
                 </el-table-column>
                 <el-table-column
@@ -59,7 +59,7 @@
                     label="目的港">
                 </el-table-column>
                 <el-table-column
-                    prop="address"
+                    prop="transportMode"
                     label="运输方式">
                 </el-table-column>
                 <el-table-column
@@ -119,7 +119,7 @@ export default {
                 type: 'success',
                 message: '删除成功!'
                 });
-                this.queryProductLIst()
+                this.queryAllExport()
             })
             }).catch(() => {
                 this.$message({
@@ -129,7 +129,13 @@ export default {
             })
         },
         updateBatch(){
-
+            let idsBatch = []
+            let idsAll2 = this.ids
+            idsAll2.forEach(v1 => {
+                idsBatch.push(v1.exportId)
+            })
+            
+            this.$router.push({path:'/goods-export/update',query:{id : idsBatch}})
         },
         selectChangeEvent(rows){
             this.ids = rows
