@@ -381,14 +381,14 @@ export default {
             }).then( res => {
               this.$message({
               type: 'success',
-              message: '删除成功!'
+              message: '上报成功!'
             });
             this.queryProductLIst()
           })
         }).catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消删除'
+              message: '已取消上报'
             })
         })
 
