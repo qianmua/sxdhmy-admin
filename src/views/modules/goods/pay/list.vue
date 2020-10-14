@@ -540,6 +540,7 @@ export default {
             // this.dataList = treeDataTranslate(data, 'menuId')
             // this.dataListLoading = false
             this.listinfo = res.data.rows
+            
           })
         },
         queryById(id){
@@ -550,7 +551,6 @@ export default {
           }).then( res => {
             // this.dataList = treeDataTranslate(data, 'menuId')
             // this.dataListLoading = false
-            console.log(res.data.info)
             this.ruleForm = res.data.info
           })
         }
