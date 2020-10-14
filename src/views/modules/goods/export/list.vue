@@ -137,6 +137,11 @@ export default {
     created(){
         this.queryAllExport()
     },
+    watch:{
+        '$route.query.t': function(newVal,oldVal){
+            this.queryAllExport()
+        }
+    },
     methods: {
         packageProduct(){
             this.dialogFormVisible = true
@@ -159,7 +164,8 @@ export default {
                     type: 'success'
                 });
                 this.dialogFormVisible = false
-                this.$router.push({path:'/goods-package/list'})
+                let t = (new Date()).valueOf()
+                this.$router.push({path:'/goods-package/list' , query:{t,t}})
             })
         },
         removeAll(){

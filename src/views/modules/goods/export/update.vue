@@ -4,12 +4,10 @@
         <el-form :inline="true"  class="demo-form-inline">
                
                 <el-form-item>
-                    <el-button type="primary" >上报</el-button>
                     <el-button type="primary" @click="searchProductList">查询货物列表</el-button>
-                    
                 </el-form-item>
             </el-form>
-        <el-form ref="form" :model="form" label-width="80px">
+        <el-form :model="formUpdate" label-width="80px">
 
 
             <el-form-item label="合同号">
@@ -17,37 +15,37 @@
             </el-form-item>
 
             <el-form-item label="信用证号">
-                <el-input v-model="form.lcno"></el-input>
+                <el-input v-model="formUpdate.lcno"></el-input>
             </el-form-item>
             <el-form-item label="装运量">
-                <el-input v-model="form.cnumber"></el-input>
+                <el-input v-model="formUpdate.cnumber"></el-input>
             </el-form-item>
             <el-form-item label="运输方式">
-                <el-radio v-model="form.transportMode" label="SEA">SEA</el-radio>
-                <el-radio v-model="form.transportMode" label="AIR">AIR</el-radio>
+                <el-radio v-model="formUpdate.transportMode" label="SEA">SEA</el-radio>
+                <el-radio v-model="formUpdate.transportMode" label="AIR">AIR</el-radio>
             </el-form-item>
             <el-form-item label="唛头">
-                <el-input v-model="form.marks"></el-input>
+                <el-input v-model="formUpdate.marks"></el-input>
             </el-form-item>
             <el-form-item label="制单日期">
-                <el-input v-model="form.createTime"></el-input>
+                <el-input v-model="formUpdate.createTime"></el-input>
             </el-form-item>
             <el-form-item label="收货人及地址">
-                <el-input v-model="form.consignee"></el-input>
+                <el-input v-model="formUpdate.consignee"></el-input>
             </el-form-item>
             <el-form-item label="目的地">
-                <el-input v-model="form.destinationPor"></el-input>
+                <el-input v-model="formUpdate.destinationPor"></el-input>
             </el-form-item>
             <el-form-item label="价格条件">
-                <el-radio v-model="form.priceCondition" label="FOB">FOB</el-radio>
-                <el-radio v-model="form.priceCondition" label="CIF">CIF</el-radio>
+                <el-radio v-model="formUpdate.priceCondition" label="FOB">FOB</el-radio>
+                <el-radio v-model="formUpdate.priceCondition" label="CIF">CIF</el-radio>
             </el-form-item>
             <el-form-item label="备注">
-                <el-input v-model="form.remark"></el-input>
+                <el-input v-model="formUpdate.remark"></el-input>
             </el-form-item>
            
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button type="primary" @click="onSubmit">修改</el-button>
                 <el-button>取消</el-button>
             </el-form-item>
         </el-form>
@@ -56,6 +54,7 @@
         <!-- card -->
         <el-card class="box-card">
             <el-table
+            v-loading="loading"
             :data="tableData"
             style="width: 100%">
             <el-table-column
@@ -112,33 +111,35 @@
 export default {
     data() {
         return {
+            loading: true,
             id: '',
             tableData: [],
-            form:{
+            formUpdate:{
                 exportId: '',
                 lcno: '',
-                cnumber: '',
-                transportMode: '',
-                marks: '',
-                createTime: '',
-                consignee: '',
-                destinationPor: '',
-                priceCondition: '',
-                remark: '',
+                cnumber: ' ',
+                transportMode: ' ',
+                marks: ' ',
+                createTime: ' ',
+                consignee: ' ',
+                destinationPor: ' ',
+                priceCondition: ' ',
+                remark: ' ',
             },
         }
     },
     created(){
-        let id = this.$route.query.id
-        this.id = id
-        this.queryById(id)
+    },
+    mounted(){
+        this.id = this.$route.query.id
+        this.queryById(this.id)
+        this.queryPList(this.id)
     },
     watch:{
         '$route.query.id': function(newVal,oldVal){
             this.id = newVal
-            this.queryById(id)
-            this.form.exportId = newVal
-            console.log(this.id);
+            this.queryById(this.id)
+            this.formUpdate.exportId = newVal
             this.queryPList(newVal)
         }
     },
@@ -147,14 +148,16 @@ export default {
             this.$http({
                 url: this.$http.adornUrl(`/admin/service/factory/export-c/update`),
                 method: 'put',
-                data: this.form,
+                data: this.formUpdate,
                 }).then( res => {
-                    this.$notify({
+                this.$notify({
                     title: '成功',
                     message: '修改成功',
                     type: 'success'
                 });
-                this.$router.push({path:'/goods-export/list'})
+                let t = (new Date()).valueOf()
+                
+                this.$router.push({path:'/goods-export/list',query:{t,t}})
             })
         },
         queryById(id){
@@ -166,7 +169,7 @@ export default {
             }).then( res => {
                 // this.dataList = treeDataTranslate(data, 'menuId')
                 // this.dataListLoading = false
-                this.form = res.data.data
+                this.formUpdate = res.data.data
   
             })
         },
@@ -175,8 +178,6 @@ export default {
             this.queryPList(this.id)
         },
         queryPList(id){
-            console.log(id);
-            
             this.$http({
             url: this.$http.adornUrl(`/admin/service/factory/export-product-c/list/${id}`),
             method: 'get',
@@ -185,8 +186,8 @@ export default {
                 // this.dataList = treeDataTranslate(data, 'menuId')
                 // this.dataListLoading = false
                 this.tableData = res.data.rows
+                this.loading = false
                 console.log(this.tableData)
-
                 
             })
         },

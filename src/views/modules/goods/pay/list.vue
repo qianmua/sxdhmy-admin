@@ -369,7 +369,7 @@ export default {
           ids.push(v1.contractId)
         })
 
-        this.$confirm(`此操作有危险, 是否继续?`, '提示', {
+        this.$confirm(`谨慎操作, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -414,7 +414,8 @@ export default {
 
             data:  this.$http.adornData(ids, false),
             }).then( res => {
-             this.$router.push({path:'/goods-export/list'})
+               let t = (new Date()).valueOf()
+             this.$router.push({path:'/goods-export/list',query:{t , t}})
           })
         }
       },

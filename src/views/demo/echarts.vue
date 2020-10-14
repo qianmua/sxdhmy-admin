@@ -4,7 +4,7 @@
       title="提示："
       type="warning"
       :closable="false">
-      <div slot-scope="description">
+      <div >
         <p class="el-alert__description">1. 此Demo只提供ECharts官方使用文档，入门部署和体验功能。具体使用请参考：http://echarts.baidu.com/index.html</p>
       </div>
     </el-alert>

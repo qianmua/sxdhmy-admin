@@ -114,6 +114,11 @@ export default {
     created(){
         this.queryList()
     },
+    watch:{
+        '$route.query.t': function(newVal,oldVal){
+            this.queryList()
+        }
+    },
     methods: {
         updateBatch(){
             
