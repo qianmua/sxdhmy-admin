@@ -127,7 +127,7 @@ export default {
                 exportIds: '',
                 buyer: '',
                 invoiceNo: '',
-                invoiceDate: '',
+                invoiceDate: '2020-10-22',
                 marks: '',
                 descriptions: '',
                 state: 0,

@@ -119,7 +119,7 @@
             importNum: 1,
             inputBy: "",
             inspector: "",
-            offeror: "",
+            offeror: "德宏",
             oldState: 0,
             outState: 0,
             printStyle: 1,

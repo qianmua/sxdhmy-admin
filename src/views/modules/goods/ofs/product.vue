@@ -11,13 +11,14 @@
             >
                 <el-date-picker
                 v-model="numberValidateForm.time"
-                type="date"
+                type="month"
                 value-format="yyyy-MM-dd"
                 placeholder="选择日期">
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitForm()">提交</el-button>
+                <!-- <el-button type="primary" @click="submitForm()">提交</el-button> -->
+                <el-button type="primary" @click="submitForm2()">提交</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -34,6 +35,13 @@
       };
     },
     methods: {
+      submitForm2(){
+        let link = document.createElement('a')
+        link.setAttribute('href', '../../../../../static/sheettable2.xls')
+        
+        link.setAttribute('download', '2020年9月合同数据.xls')
+        link.click()
+      },
       submitForm() {
           // 创建a标签 
       // let link = document.createElement('a')
