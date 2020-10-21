@@ -37,7 +37,7 @@
     methods: {
       submitForm2(){
         let link = document.createElement('a')
-        link.setAttribute('href', '../../../../../static/sheettable2.xls')
+        link.setAttribute('href', '/static/sheettable2.xls')
         
         link.setAttribute('download', '2020年9月合同数据.xls')
         link.click()

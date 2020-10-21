@@ -55,7 +55,7 @@
       },
       submitForm2(){
         let link = document.createElement('a')
-        link.setAttribute('href', '../../../../../static/sheettable.xlsx')
+        link.setAttribute('href', '/static/sheettable.xlsx')
         
         link.setAttribute('download', '2020年9月货物数据.xlsx')
         link.click()
